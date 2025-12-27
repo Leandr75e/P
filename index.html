@@ -1,0 +1,2906 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Léandre Lanzas-Perez | Quantitative Finance & AI</title>
+    <meta name="description"
+        content="Portfolio de Léandre Lanzas-Perez. Finance Quantitative, Gestion d'actifs et Intelligence Artificielle.">
+
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23030305%22 stroke=%22%2300f3ff%22 stroke-width=%225%22/><circle cx=%2250%22 cy=%2250%22 r=%2220%22 fill=%22%237000ff%22/></svg>">
+
+    <meta property="og:title" content="Léandre Lanzas-Perez | Quantitative Finance & AI">
+    <meta property="og:description" content="Portfolio Finance Quantitative et IA.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #030305;
+            --text-color: #ffffff;
+            --accent-primary: #7000ff;
+            /* Neon Purple */
+            --accent-secondary: #00f3ff;
+            /* Cyan */
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Space Grotesk', sans-serif;
+            --font-display: 'Syncopate', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            /* Safari */
+            user-select: none;
+            /* Standard */
+            -webkit-touch-callout: none;
+        }
+
+        input,
+        textarea {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            -webkit-touch-callout: default !important;
+        }
+
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            cursor: none;
+            overflow-x: hidden;
+        }
+
+        html.lenis {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .grabbing-mode {
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: grabbing;
+        }
+
+        /* --- LANGUAGE SWITCHER STYLES --- */
+        .lang-switch {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999; /* Au dessus de tout sauf la modal */
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .lang-switch:hover {
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-family: var(--font-display);
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .lang-btn:hover {
+            color: white;
+        }
+
+        .lang-btn.active {
+            color: var(--accent-secondary);
+            text-shadow: 0 0 10px var(--accent-secondary);
+        }
+        
+        .lang-separator {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- END LANGUAGE SWITCHER --- */
+
+        .glass-form {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .glass-form:hover {
+            border-color: var(--accent-secondary);
+            transform: translateY(-5px);
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-secondary);
+            background: rgba(0, 243, 255, 0.05);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        .form-btn {
+            width: 100%;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid var(--accent-secondary);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+            padding: 3rem;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--accent-primary);
+        }
+
+        .detail-block {
+            margin-bottom: 2.5rem;
+            padding-left: 1rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-title {
+            font-family: var(--font-display);
+            color: var(--accent-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .detail-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-secondary);
+            margin-right: 10px;
+            box-shadow: 0 0 10px var(--accent-secondary);
+        }
+
+        .detail-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-list li {
+            margin-bottom: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .detail-list li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        .singularity-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 5;
+            padding-bottom: 2rem;
+        }
+
+        .black-hole {
+            width: 120px;
+            height: 120px;
+            background: #000;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .black-hole.white-hole {
+            background: #fff;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.8);
+            transform: scale(1.1);
+        }
+
+        .black-hole.white-hole .accretion-disk {
+            background: conic-gradient(from 0deg,
+                    transparent 0%,
+                    #00f3ff 50%,
+                    transparent 100%);
+            animation: spinHole 0.5s linear infinite reverse;
+            opacity: 0.8;
+        }
+
+        .black-hole.white-hole:hover {
+            box-shadow: 0 0 60px rgba(0, 243, 255, 1);
+        }
+
+        .black-hole:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(112, 0, 255, 0.6);
+        }
+
+        .accretion-disk {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg,
+                    transparent 0%,
+                    var(--accent-primary) 50%,
+                    transparent 100%);
+            z-index: -1;
+            opacity: 0.5;
+            animation: spinHole 2s linear infinite;
+            filter: blur(8px);
+        }
+
+        .black-hole:active .accretion-disk {
+            opacity: 1;
+            filter: blur(2px);
+            animation: spinHole 0.2s linear infinite;
+        }
+
+        .black-hole:active {
+            transform: scale(0.9);
+        }
+
+        @keyframes spinHole {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+                
+            html, body {
+                overflow-x: hidden; /* On garde le masquage horizontal */
+                overflow-y: auto !important; /* IMPORTANT : On force le scroll vertical */
+                height: auto !important; /* On laisse la hauteur se calculer naturellement */
+                -webkit-overflow-scrolling: touch; /* Réactive l'inertie sur iOS (le rebond fluide) */
+                position: relative !important; /* Évite les conflits de positionnement */
+            }
+
+            section {
+                padding-top: 10rem !important;
+                padding-bottom: 6rem !important;
+                margin-bottom: 4rem;
+            }
+
+            .glass-form {
+                padding: 1.5rem;
+            }
+
+            .form-group {
+                grid-template-columns: 1fr;
+            }
+
+            html,
+            body {
+                scroll-behavior: smooth !important;
+            }
+            
+            .lang-switch {
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+        }
+
+        .cursor-dot {
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-secondary);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            z-index: 10001;
+            pointer-events: none;
+            box-shadow:
+                0 0 10px 2px rgba(0, 243, 255, 0.8),
+                0 0 30px 10px rgba(0, 243, 255, 0.3);
+            transition: transform 0.1s, background-color 0.2s, box-shadow 0.2s;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .gradient-text {
+            background-image: linear-gradient(90deg, #ffffff, var(--accent-secondary), var(--accent-primary));
+            background-size: 100%;
+            background-repeat: no-repeat;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5vw;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 2rem 5vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            mix-blend-mode: difference;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 1px;
+            background: var(--accent-secondary);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 5;
+        }
+
+        .hero-label {
+            font-family: var(--font-display);
+            color: var(--accent-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            display: block;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 5.5vw, 5.5rem);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 500px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            border-left: 2px solid var(--accent-primary);
+            padding-left: 1.5rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(circle,
+                    rgba(0, 243, 255, 0.12) 0%,
+                    rgba(112, 0, 255, 0.12) 20%,
+                    rgba(112, 0, 255, 0.02) 50%,
+                    transparent 80%);
+            opacity: 0;
+            animation: ignition 4s ease-out 1s forwards;
+        }
+
+        .btn-glow {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent-primary);
+            color: white;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            opacity: 1;
+        }
+
+        .btn-glow span,
+        .btn-glow i {
+            position: relative;
+            z-index: 5;
+        }
+
+        .btn-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .btn-glow:hover {
+            background: var(--accent-primary);
+            box-shadow: 0 0 30px rgba(112, 0, 255, 0.4);
+        }
+
+        .marquee-container {
+            padding: 4rem 0;
+            background: transparent;
+            backdrop-filter: blur(5px);
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: scroll 70s linear infinite;
+        }
+
+        .marquee-item {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+            margin: 0 2rem;
+            font-weight: 700;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 6rem 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.4s, border-color 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--accent-secondary);
+            transform: translateY(-5px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .col-span-4 {
+            grid-column: span 4;
+        }
+
+        .col-span-6 {
+            grid-column: span 6;
+        }
+
+        .col-span-8 {
+            grid-column: span 8;
+        }
+
+        .col-span-12 {
+            grid-column: span 12;
+        }
+
+        .card h3 {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-secondary);
+        }
+
+        .card ul {
+            list-style: none;
+        }
+
+        .card li {
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .card li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--accent-primary);
+        }
+
+        .timeline {
+            margin-top: 4rem;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--accent-secondary), var(--accent-primary), transparent);
+        }
+
+        .xp-item {
+            padding-left: 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .xp-dot {
+            position: absolute;
+            left: -5px;
+            top: 5px;
+            width: 11px;
+            height: 11px;
+            background: var(--bg-color);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-secondary);
+        }
+
+        .xp-date {
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .xp-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .xp-company {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1.5rem;
+        }
+
+        .tags {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .tag:hover {
+            border-color: var(--accent-secondary);
+            color: var(--accent-secondary);
+        }
+
+        .contact-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: transparent;
+            z-index: 1;
+        }
+
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: -60vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200%;
+            height: 220vh;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(circle closest-side,
+                    rgba(112, 0, 255, 0.15) 0%,
+                    rgba(112, 0, 255, 0.10) 25%,
+                    rgba(112, 0, 255, 0.05) 45%,
+                    rgba(112, 0, 255, 0.01) 70%,
+                    transparent 100%);
+        }
+
+        .contact-big {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 6vw, 5rem);
+            margin-bottom: 2rem;
+            transition: color 0.3s;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .contact-big:hover {
+            color: var(--accent-secondary);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 200;
+        }
+
+        .bar {
+            width: 30px;
+            height: 2px;
+            background-color: white;
+            transition: 0.3s;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(3, 3, 5, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding-left: 3%;
+            gap: 1rem;
+            transform: translateY(-100%);
+            transition: transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+            z-index: 150;
+            overflow: hidden;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+        }
+
+        .mobile-menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 3, 5, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .menu-close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 3rem;
+            line-height: 0.5;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            z-index: 160;
+            transition: all 0.3s ease;
+        }
+
+        .menu-close-btn:hover {
+            color: var(--accent-secondary);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .mobile-menu-btn.active {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .mobile-link {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(50px);
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+            width: fit-content;
+        }
+
+        .link-num {
+            font-size: 1rem;
+            color: var(--accent-secondary);
+            font-family: var(--font-main);
+            letter-spacing: 2px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        .mobile-link:hover,
+        .mobile-link:active {
+            color: white;
+            -webkit-text-stroke: 0px transparent;
+            padding-left: 20px;
+        }
+
+        .mobile-link:hover .link-num {
+            color: var(--accent-primary);
+        }
+
+        .mobile-menu.active .mobile-link {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease, color 0.3s, padding 0.3s;
+        }
+
+        .mobile-menu.active .mobile-link:nth-child(2) {
+            transition-delay: 0.1s;
+        }
+
+        .mobile-menu.active .mobile-link:nth-child(3) {
+            transition-delay: 0.2s;
+        }
+
+        .mobile-menu.active .mobile-link:nth-child(4) {
+            transition-delay: 0.3s;
+        }
+
+        .mobile-menu.active .mobile-link:nth-child(5) {
+            transition-delay: 0.4s;
+        }
+
+        .menu-bg-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, rgba(112, 0, 255, 0.1), transparent 60%);
+            opacity: 0.5;
+        }
+
+        .nav-links-desktop {
+            display: flex;
+        }
+
+        .nav-link.active {
+            color: var(--accent-secondary);
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .project-card {
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .project-card::after {
+            content: 'Voir les détails'; /* Sera mis à jour via JS pour la langue */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: var(--accent-primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 10;
+        }
+
+        /* Specific rule for English override via JS/CSS class if needed, 
+           but we will handle the text change via JS data attribute */
+        
+        @media (hover: hover) {
+            .project-card:hover::after {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            .project-card:hover {
+                border-color: var(--accent-primary);
+                transform: translateY(-10px);
+            }
+        }
+
+        .project-card.tap-active::after {
+            opacity: 1 !important;
+            transform: translate(-50%, -50%) scale(1) !important;
+            visibility: visible !important;
+        }
+
+        .project-card.tap-active {
+            border-color: var(--accent-primary) !important;
+            transform: translateY(-5px);
+        }
+
+        .project-card:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .col-span-4,
+            .col-span-6,
+            .col-span-8 {
+                grid-column: span 1;
+            }
+
+            .nav-links-desktop {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .cursor-dot,
+            .cursor-outline {
+                display: none !important;
+            }
+
+            body {
+                cursor: auto;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .cursor-dot,
+            .cursor-outline {
+                display: none !important;
+            }
+
+            body {
+                cursor: auto;
+            }
+        }
+
+        @keyframes ignition {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+                filter: blur(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+                filter: blur(0px);
+            }
+        }
+
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #030305;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .loader-content {
+            text-align: center;
+            width: 300px;
+        }
+
+        .loader-percent {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--accent-secondary);
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .loader-text {
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            height: 1rem;
+        }
+
+        .loader-bar-bg {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--accent-secondary);
+            box-shadow: 0 0 10px var(--accent-secondary);
+            transition: width 0.1s linear;
+        }
+
+        .loader-footer {
+            position: absolute;
+            bottom: 2rem;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-family: var(--font-main);
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-label,
+        .hero h1,
+        .hero p,
+        .btn-glow,
+        .hero-stats,
+        nav {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        main {
+            position: relative; /* Rend le contenu "physique" par rapport au fond */
+            z-index: 1; /* Le place au-dessus du canvas (z-index: 0) */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lang-switch">
+        <button class="lang-btn" id="btn-fr" onclick="changeLanguage('fr')">FR</button>
+        <span class="lang-separator">/</span>
+        <button class="lang-btn active" id="btn-en" onclick="changeLanguage('en')">EN</button>
+    </div>
+
+    <div id="preloader">
+        <div class="loader-content">
+            <div class="loader-percent">0%</div>
+            <div class="loader-text">SYSTEM INITIALIZATION...</div>
+            <div class="loader-bar-bg">
+                <div class="loader-bar-fill"></div>
+            </div>
+        </div>
+        <div class="loader-footer">
+            <span>MEM: 64GB OK</span>
+            <span>GPU: DETECTED</span>
+            <span>CONN: SECURE</span>
+        </div>
+    </div>
+    <div id="canvas-container"></div>
+
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <nav>
+        <div class="logo">LÉANDRE<span style="color:var(--accent-primary)">.LP</span></div>
+
+        <div class="nav-links-desktop">
+        </div>
+
+        <div class="mobile-menu-btn" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+    </nav>
+    <div class="mobile-menu">
+        <div class="menu-bg-decoration"></div>
+
+        <div class="menu-close-btn" onclick="toggleMenu()">×</div>
+
+        <a href="#about" class="nav-link mobile-link" onclick="toggleMenu()">
+            <span class="link-num">1</span> <span data-i18n="nav_about">Profil</span>
+        </a>
+
+        <a href="#experience" class="nav-link mobile-link" onclick="toggleMenu()">
+            <span class="link-num">2</span> <span data-i18n="nav_exp">Parcours</span>
+        </a>
+
+        <a href="#projects" class="nav-link mobile-link" onclick="toggleMenu()">
+            <span class="link-num">3</span> <span data-i18n="nav_projects">Projets</span>
+        </a>
+
+        <a href="#contact" class="nav-link mobile-link" onclick="toggleMenu()">
+            <span class="link-num">4</span> <span data-i18n="nav_contact">Contact</span>
+        </a>
+    </div>
+
+    <main>
+
+        <section class="hero">
+            <div class="container hero-content">
+                <span class="hero-label" data-i18n="hero_label">Trading - Finance Quantitative - IA</span>
+                <h1 data-i18n="hero_title">
+                    Comprendre les marchés,<br>
+                    <span class="gradient-text">Pas les suivre.</span>
+                </h1>
+                <p data-i18n="hero_desc">
+                    Étudiant en Économie spécialisé en gestion d'actifs numériques et systèmes intelligents.
+                    Je combine rigueur analytique et algorithmes avancés pour décrypter les marchés.
+                </p>
+                <a href="#contact" class="btn-glow">
+                    <span data-i18n="hero_cta">Me Contacter</span>
+                </a>
+
+                <div class="hero-stats" style="margin-top: 3rem; display: flex; gap: 3rem; opacity: 0.7;">
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent-primary);">L3</div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase;" data-i18n="stats_eco">Économie</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent-primary);">2023</div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase;">Active Trading</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent-primary);">3+</div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase;" data-i18n="stats_proj">Projets</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <span class="marquee-item">FINANCIAL MARKETS</span>
+                <span class="marquee-item">DERIVATIVES</span>
+                <span class="marquee-item">DECENTRALIZED FINANCE</span>
+                <span class="marquee-item">MARKET ANALYSIS</span>
+                <span class="marquee-item">ASSET MANAGEMENT</span>
+                <span class="marquee-item">TRADING</span>
+                <span class="marquee-item">CORPORATE FINANCE</span>
+                <span class="marquee-item">CRYPTO ASSETS</span>
+                <span class="marquee-item">TECHNOLOGIES</span>
+                <span class="marquee-item">RISK MANAGEMENT</span>
+                <span class="marquee-item">FINANCE</span>
+                <span class="marquee-item">ARTIFICIAL INTELLIGENCE</span>
+                <span class="marquee-item">DERIVATIVES</span>
+                <span class="marquee-item">DATA ANALYSIS</span>
+                <span class="marquee-item">ASSET MANAGEMENT</span>
+                <span class="marquee-item">TRADING</span>
+                <span class="marquee-item">CORPORATE FINANCE</span>
+                <span class="marquee-item">CRYPTO ASSETS</span>
+                <span class="marquee-item">TECHNOLOGIES</span>
+                <span class="marquee-item">RISK MANAGEMENT</span>
+            </div>
+        </div>
+
+        <section id="about" class="container">
+            <div style="margin-bottom: 2rem;">
+                <span class="hero-label">01 // <span data-i18n="nav_about">PROFIL</span></span>
+                <h2 style="font-size: 3rem;" data-i18n="about_title">Vision & Compétences</h2>
+            </div>
+
+            <div class="bento-grid">
+                <div class="card col-span-8">
+                    <h3 data-i18n="about_edu_title">Formation Académique</h3>
+                    <p style="margin-bottom: 1rem; color: #fff;"><strong data-i18n="about_edu_sub">Licence d'Économie - Parcours International</strong> <span style="float: right; color: var(--accent-primary);" data-i18n="about_current">En cours</span></p>
+                    <p style="margin-bottom: 1rem;">FDSE, Limoges & Technical University of Crete (Erasmus)</p>
+                    <ul>
+                        <li data-i18n="about_edu_1">Major en L1, Mention Très Bien L2</li>
+                        <li data-i18n="about_edu_2">Mobilité de 1 an à la Technical University of Crete</li>
+                        <li data-i18n="about_edu_3">Spécialisation en modélisation et analyse macro-économique</li>
+                        <li data-i18n="about_edu_4">Baccalauréat ES, Mention Très Bien, Option Droit</li>
+                    </ul>
+                </div>
+
+                <div class="card col-span-4">
+                    <h3 data-i18n="about_lang_title">Langues</h3>
+                    <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                        <div>
+                            <div style="font-size: 2rem; color: var(--accent-secondary);">FR</div>
+                            <span data-i18n="about_lang_fr">Natif</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; color: var(--accent-primary);">EN</div>
+                            <span data-i18n="about_lang_en">C1, Erasmus</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card col-span-6" id="skills">
+                    <h3 data-i18n="about_fin_title">Finance de Marché</h3>
+                    <p style="margin-bottom: 1rem;" data-i18n="about_fin_desc">Focalisation sur les dérivés et la volatilité.</p>
+                    <ul>
+                        <li data-i18n="about_fin_1">Produits: Spot, Futures, Options</li>
+                        <li data-i18n="about_fin_2">Analyse: Suivi des Greeks, Backtesting, Exposition</li>
+                        <li data-i18n="about_fin_3">Stratégies: Multi-legs, Delta Hedging</li>
+                        <li data-i18n="about_fin_4">Risk Management: VaR, Sharpe Ratio, Drawdown Management</li>
+                    </ul>
+                </div>
+
+                <div class="card col-span-6">
+                    <h3>Tech & IA</h3>
+                    <p style="margin-bottom: 1rem;" data-i18n="about_tech_desc">Développement d'outils d'aide à la décision.</p>
+                    <ul>
+                        <li data-i18n="about_tech_1">Orchestration d'agents IA multi-modèles</li>
+                        <li data-i18n="about_tech_2">Python (Pandas, API marchés, Backtesting)</li>
+                        <li data-i18n="about_tech_3">Prompt Engineering avancé</li>
+                        <li data-i18n="about_tech_4">Création de dashboards & Data pipelines</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="container">
+            <div style="margin-bottom: 2rem;">
+                <span class="hero-label">02 // <span data-i18n="nav_exp">PARCOURS</span></span>
+                <h2 style="font-size: 3rem;" data-i18n="exp_title">Expérience Professionnelle</h2>
+            </div>
+
+            <div class="timeline">
+
+                <div class="xp-item">
+                    <div class="xp-dot"></div>
+                    <div class="xp-date" data-i18n="exp_1_date">AOÛT 2024 - PRÉSENT</div>
+                    <h3 class="xp-title" data-i18n="exp_1_title">Gestion de Portefeuille Privé - Dérivés & Actifs Numériques</h3>
+                    <p class="xp-company" data-i18n="exp_1_comp">Compte Propre / Freelance</p>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.6;" data-i18n="exp_1_desc">
+                        Gestion active et collaborative de portefeuilles multi-actifs.
+                        Mise en place de monitoring multi-flux (spot/futures/options) et exploitation de données
+                        implicite.
+                        Déploiement d'outils statistiques propriétaires pour le suivi des expositions.
+                    </p>
+                    <div class="tags">
+                        <span class="tag">Trading</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">Risk Management</span>
+                        <span class="tag">Crypto Assets</span>
+                    </div>
+                </div>
+
+                <div class="xp-item">
+                    <div class="xp-dot"></div>
+                    <div class="xp-date" data-i18n="exp_2_date">JUIN - SEPTEMBRE 2025</div>
+                    <h3 class="xp-title" data-i18n="exp_2_title">Stagiaire en Gestion de Patrimoine</h3>
+                    <p class="xp-company">MVPartenaires</p>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.6;" data-i18n="exp_2_desc">
+                        Diagnostic patrimonial et allocation stratégique.
+                        Gestion active de portefeuille.
+                        Construction de projet d'investissement en Private Equity.
+                        Analyses financières et comptables avancées
+                    </p>
+                    <div class="tags">
+                        <span class="tag">Wealth Management</span>
+                        <span class="tag">Corporate Finance</span>
+                        <span class="tag">Financial Analysis</span>
+                        <span class="tag">Investment</span>
+                    </div>
+                </div>
+
+                <div class="xp-item">
+                    <div class="xp-dot"></div>
+                    <div class="xp-date" data-i18n="exp_3_date">MARS 2023</div>
+                    <h3 class="xp-title" data-i18n="exp_3_title">Stagiaire Banque & Assurance</h3>
+                    <p class="xp-company">Crédit Agricole</p>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.6;" data-i18n="exp_3_desc">
+                        Gestion des comptes et souscription de produits d’assurance. Contribution au
+                        suivi opérationnel avec comptabilisation des flux et observation des processus internes.
+                        Exposition aux mécanismes opérationnels d’un réseau bancaire national
+                    </p>
+                    <div class="tags">
+                        <span class="tag">Insurance</span>
+                        <span class="tag">Closing</span>
+                        <span class="tag">Banking</span>
+                        <span class="tag">Cash Monitoring</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="projects" class="container">
+            <div style="margin-bottom: 2rem;">
+                <span class="hero-label">03 // <span data-i18n="nav_projects">PROJETS</span></span>
+                <h2 style="font-size: 3rem;" data-i18n="proj_title">Laboratoire & Projets</h2>
+            </div>
+
+            <div class="bento-grid">
+
+                <div class="card col-span-4 project-card">
+                    <h3>Tech & Dev</h3>
+                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.6);" data-i18n="proj_1_sub">Solutions logicielles & Web</p>
+                    <ul>
+                        <li data-i18n="proj_1_li1">Écosystèmes d'agents IA</li>
+                        <li data-i18n="proj_1_li2">Dev Web UX/UI</li>
+                        <li data-i18n="proj_1_li3">Automatisation</li>
+                    </ul>
+
+                    <div class="project-hidden-content" style="display: none;">
+                        <div class="detail-block">
+                            <h4 class="detail-title" data-i18n="proj_1_d1_t">IA & COMPTABILITÉ</h4>
+                            <ul class="detail-list">
+                                <li data-i18n="proj_1_d1_l1">Création d'un écosystème d'agents IA propriétaire pour l'analyse financière indépendant.</li>
+                                <li data-i18n="proj_1_d1_l2">Architecture multi-modèles pour le traitement comptable.</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-block">
+                            <h4 class="detail-title">WEB DESIGN & UI/UX</h4>
+                            <ul class="detail-list">
+                                <li data-i18n="proj_1_d2_l1">Plateforme de réservation complète (Front/Back).</li>
+                                <li data-i18n="proj_1_d2_l2">Landing pages touristiques à haute conversion.</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-block">
+                            <h4 class="detail-title">PERSONAL MONITORING</h4>
+                            <ul class="detail-list">
+                                <li data-i18n="proj_1_d3_l1">Auto-Hébergement & Fine Tuning de modèles (LLM).</li>
+                                <li data-i18n="proj_1_d3_l2">Automatisation de workflows via Python.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card col-span-4 project-card">
+                    <h3>Data & Quant</h3>
+                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.6);" data-i18n="proj_2_sub">Ingénierie de la donnée</p>
+                    <ul>
+                        <li data-i18n="proj_2_li1">Extracteurs & API</li>
+                        <li data-i18n="proj_2_li2">Modèles statistiques</li>
+                        <li data-i18n="proj_2_li3">Dashboards interactifs</li>
+                    </ul>
+
+                    <div class="project-hidden-content" style="display: none;">
+                        <div class="detail-block">
+                            <h4 class="detail-title">DATA ENGINEERING</h4>
+                            <ul class="detail-list">
+                                <li data-i18n="proj_2_d1_l1">Dashboards d'investissement en Private Equity.</li>
+                                <li data-i18n="proj_2_d1_l2">Calculateur de rentabilité & allocation de portefeuille.</li>
+                                <li data-i18n="proj_2_d1_l3">Outils de Risk Management & Pricing d'options.</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-block">
+                            <h4 class="detail-title" data-i18n="proj_2_d2_t">EXTRACTEURS & API</h4>
+                            <ul class="detail-list">
+                                <li data-i18n="proj_2_d2_l1">Scraping et analyse de flux (INSEE, Boursorama).</li>
+                                <li data-i18n="proj_2_d2_l2">Classification automatique de bilans par IA.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card col-span-4 project-card">
+                    <h3>Market Analysis</h3>
+                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.6);" data-i18n="proj_3_sub">Recherche & Stratégie</p>
+                    <ul>
+                        <li data-i18n="proj_3_li1">Macro & Flux</li>
+                        <li data-i18n="proj_3_li2">Structure de marché</li>
+                        <li data-i18n="proj_3_li3">Risk Management</li>
+                    </ul>
+
+                    <div class="project-hidden-content" style="display: none;">
+                        <div class="detail-block">
+                            <h4 class="detail-title" data-i18n="proj_3_d1_t">GESTION PRIVÉE</h4>
+                            <ul class="detail-list">
+                                <li data-i18n="proj_3_d1_l1">Veille Macro, analyse des flux & volatilité implicite.</li>
+                                <li data-i18n="proj_3_d1_l2">Stratégies de Lending & Borrowing (DeFi).</li>
+                                <li data-i18n="proj_3_d1_l3">Contrôle strict des drawdowns et des risques.</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-block">
+                            <h4 class="detail-title">CORPORATE FINANCE</h4>
+                            <ul class="detail-list">
+                                <li data-i18n="proj_3_d2_l1">Diagnostic financier approfondi (PME).</li>
+                                <li data-i18n="proj_3_d2_l2">Rédaction de rapports & Comparaison sectorielle.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div id="project-modal" class="modal-overlay">
+            <div class="modal-content card">
+                <button class="modal-close">&times;</button>
+                <h3 id="modal-title" style="font-size: 2rem; margin-bottom: 2rem;">TITRE</h3>
+                <div id="modal-body">
+                </div>
+            </div>
+        </div>
+
+        <section id="contact" class="contact-section">
+            <span class="hero-label">04 // <span data-i18n="contact_next">NEXT STEP</span></span>
+            <p style="max-width: 500px; margin-bottom: 3rem; position: relative; z-index: 2;" data-i18n="contact_desc">
+                A la recherche d'une alternance ou d'une collaboration en Finance de Marché, Corporate Finance ou Asset
+                Management.<br>
+
+                Contactez-moi !
+            </p>
+
+            <form id="contact-form" class="glass-form">
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="NOM" data-i18n-placeholder="form_name" required class="form-input">
+                    <input type="email" name="email" placeholder="EMAIL" required class="form-input">
+                </div>
+                <textarea name="message" placeholder="MESSAGE" data-i18n-placeholder="form_msg" rows="4" required class="form-input"></textarea>
+
+                <button type="submit" class="btn-glow form-btn">
+                    <span data-i18n="form_send">ENVOYER</span>
+                </button>
+            </form>
+
+            <div style="margin-top: 4rem; font-family: var(--font-display); position: relative; z-index: 2;">
+                <a href="mailto:leandree@ik.me"
+                    style="color:white; margin: 0 1rem; text-decoration: none; font-size: 0.9rem; opacity: 0.7; transition: 0.3s;"
+                    onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">leandree@ik.me</a>
+                <span style="color: var(--accent-primary);">//</span>
+                <span style="margin: 0 1rem; opacity: 0.7;">LIMOGES, FR</span>
+            </div>
+
+            <p style="margin-top: 2rem; opacity: 0.3; font-size: 0.8rem; position: relative; z-index: 2;">
+                © 2025 Léandre Lanzas-Perez. Design inspired by Future.
+            </p>
+        </section>
+        <div class="singularity-container">
+            <p style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 1rem; letter-spacing: 2px;"></p>
+            <div id="black-hole" class="black-hole">
+                <div class="accretion-disk"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <script>
+        // --- TRANSLATION LOGIC ---
+        const translations = {
+            fr: {
+                // Nav
+                nav_about: "Profil",
+                nav_exp: "Parcours",
+                nav_projects: "Projets",
+                nav_contact: "Contact",
+                // Hero
+                hero_label: "Trading - Finance Quantitative - IA",
+                hero_title: "Comprendre les marchés,<br><span class=\"gradient-text\">Pas les suivre.</span>",
+                hero_desc: "Étudiant en Économie spécialisé en gestion d'actifs numériques et systèmes intelligents. Je combine rigueur analytique et algorithmes avancés pour décrypter les marchés.",
+                hero_cta: "Me Contacter",
+                stats_eco: "Économie",
+                stats_proj: "Projets",
+                // About
+                about_title: "Vision & Compétences",
+                about_edu_title: "Formation Académique",
+                about_edu_sub: "Licence d'Économie - Parcours International",
+                about_current: "En cours",
+                about_edu_1: "Major en L1, Mention Très Bien L2",
+                about_edu_2: "Mobilité de 1 an à la Technical University of Crete",
+                about_edu_3: "Spécialisation en modélisation et analyse macro-économique",
+                about_edu_4: "Baccalauréat ES, Mention Très Bien, Option Droit",
+                about_lang_title: "Langues",
+                about_lang_fr: "Natif",
+                about_lang_en: "C1, Erasmus",
+                about_fin_title: "Finance de Marché",
+                about_fin_desc: "Focalisation sur les dérivés et la volatilité.",
+                about_fin_1: "Produits: Spot, Futures, Options",
+                about_fin_2: "Analyse: Suivi des Greeks, Backtesting, Exposition",
+                about_fin_3: "Stratégies: Multi-legs, Delta Hedging",
+                about_fin_4: "Risk Management: VaR, Sharpe Ratio, Drawdown Management",
+                about_tech_desc: "Développement d'outils d'aide à la décision.",
+                about_tech_1: "Orchestration d'agents IA multi-modèles",
+                about_tech_2: "Python (Pandas, API marchés, Backtesting)",
+                about_tech_3: "Prompt Engineering avancé",
+                about_tech_4: "Création de dashboards & Data pipelines",
+                // Exp
+                exp_title: "Expérience Professionnelle",
+                exp_1_date: "AOÛT 2024 - PRÉSENT",
+                exp_1_title: "Gestion de Portefeuille Privé - Dérivés & Actifs Numériques",
+                exp_1_comp: "Compte Propre / Freelance",
+                exp_1_desc: "Gestion active et collaborative de portefeuilles multi-actifs. Mise en place de monitoring multi-flux (spot/futures/options) et exploitation de données implicite. Déploiement d'outils statistiques propriétaires pour le suivi des expositions.",
+                exp_2_date: "JUIN - SEPTEMBRE 2025",
+                exp_2_title: "Stagiaire en Gestion de Patrimoine",
+                exp_2_desc: "Diagnostic patrimonial et allocation stratégique. Gestion active de portefeuille. Construction de projet d'investissement en Private Equity. Analyses financières et comptables avancées",
+                exp_3_date: "MARS 2023",
+                exp_3_title: "Stagiaire Banque & Assurance",
+                exp_3_desc: "Gestion des comptes et souscription de produits d’assurance. Contribution au suivi opérationnel avec comptabilisation des flux et observation des processus internes. Exposition aux mécanismes opérationnels d’un réseau bancaire national",
+                // Projects
+                proj_title: "Laboratoire & Projets",
+                proj_1_sub: "Solutions logicielles & Web",
+                proj_1_li1: "Écosystèmes d'agents IA",
+                proj_1_li2: "Dev Web UX/UI",
+                proj_1_li3: "Automatisation",
+                proj_1_d1_t: "IA & COMPTABILITÉ",
+                proj_1_d1_l1: "Création d'un écosystème d'agents IA propriétaire pour l'analyse financière indépendant.",
+                proj_1_d1_l2: "Architecture multi-modèles pour le traitement comptable.",
+                proj_1_d2_l1: "Plateforme de réservation complète (Front/Back).",
+                proj_1_d2_l2: "Landing pages touristiques à haute conversion.",
+                proj_1_d3_l1: "Auto-Hébergement & Fine Tuning de modèles (LLM).",
+                proj_1_d3_l2: "Automatisation de workflows via Python.",
+                proj_2_sub: "Ingénierie de la donnée",
+                proj_2_li1: "Extracteurs & API",
+                proj_2_li2: "Modèles statistiques",
+                proj_2_li3: "Dashboards interactifs",
+                proj_2_d1_l1: "Dashboards d'investissement en Private Equity.",
+                proj_2_d1_l2: "Calculateur de rentabilité & allocation de portefeuille.",
+                proj_2_d1_l3: "Outils de Risk Management & Pricing d'options.",
+                proj_2_d2_t: "EXTRACTEURS & API",
+                proj_2_d2_l1: "Scraping et analyse de flux (INSEE, Boursorama).",
+                proj_2_d2_l2: "Classification automatique de bilans par IA.",
+                proj_3_sub: "Recherche & Stratégie",
+                proj_3_li1: "Macro & Flux",
+                proj_3_li2: "Structure de marché",
+                proj_3_li3: "Risk Management",
+                proj_3_d1_t: "GESTION PRIVÉE",
+                proj_3_d1_l1: "Veille Macro, analyse des flux & volatilité implicite.",
+                proj_3_d1_l2: "Stratégies de Lending & Borrowing (DeFi).",
+                proj_3_d1_l3: "Contrôle strict des drawdowns et des risques.",
+                proj_3_d2_l1: "Diagnostic financier approfondi (PME).",
+                proj_3_d2_l2: "Rédaction de rapports & Comparaison sectorielle.",
+                // Contact
+                contact_next: "NEXT STEP",
+                contact_desc: "A la recherche d'une alternance ou d'une collaboration en Finance de Marché, Corporate Finance ou Asset Management.<br>Contactez-moi !",
+                form_name: "NOM",
+                form_msg: "MESSAGE",
+                form_send: "ENVOYER",
+                card_bubble: "Voir les détails"
+            },
+            en: {
+                // Nav
+                nav_about: "Profile",
+                nav_exp: "Timeline",
+                nav_projects: "Projects",
+                nav_contact: "Contact",
+                // Hero
+                hero_label: "Trading - Quantitative Finance - AI",
+                hero_title: "Understand markets,<br><span class=\"gradient-text\">Don't just follow them.</span>",
+                hero_desc: "Economics student specializing in Digital Asset Management and Intelligent Systems. I combine analytical rigor with advanced algorithms to decode market flows.",
+                hero_cta: "Get in Touch",
+                stats_eco: "Economics",
+                stats_proj: "Projects",
+                // About
+                about_title: "Vision & Skills",
+                about_edu_title: "Academic Background",
+                about_edu_sub: "BSc in Economics - International Track",
+                about_current: "Ongoing",
+                about_edu_1: "Top of class in Year 1, High Honors in Year 2",
+                about_edu_2: "1-year mobility at Technical University of Crete",
+                about_edu_3: "Specialization in macroeconomic modeling & analysis",
+                about_edu_4: "Baccalauréat ES, High Honors, Law Option",
+                about_lang_title: "Languages",
+                about_lang_fr: "Native",
+                about_lang_en: "C1, Erasmus",
+                about_fin_title: "Market Finance",
+                about_fin_desc: "Focus on Derivatives and Volatility.",
+                about_fin_1: "Products: Spot, Futures, Options",
+                about_fin_2: "Analysis: Greeks monitoring, Backtesting, Exposure",
+                about_fin_3: "Strategies: Multi-legs, Delta Hedging",
+                about_fin_4: "Risk Management: VaR, Sharpe Ratio, Drawdown Management",
+                about_tech_desc: "Development of Decision Support Tools.",
+                about_tech_1: "Multi-model AI Agent Orchestration",
+                about_tech_2: "Python (Pandas, Market APIs, Backtesting)",
+                about_tech_3: "Advanced Prompt Engineering",
+                about_tech_4: "Dashboard creation & Data pipelines",
+                // Exp
+                exp_title: "Professional Background",
+                exp_1_date: "AUGUST 2024 - PRESENT",
+                exp_1_title: "Private Portfolio Management - Derivatives & Digital Assets",
+                exp_1_comp: "Proprietary Trading / Freelance",
+                exp_1_desc: "Active and collaborative management of multi-asset portfolios. Implementation of multi-flow monitoring (spot/futures/options) and utilization of implied data. Deployment of proprietary statistical tools for exposure tracking.",
+                exp_2_date: "JUNE - SEPTEMBER 2025",
+                exp_2_title: "Wealth Management Intern",
+                exp_2_desc: "Patrimonial diagnosis and strategic allocation. Active portfolio management. Construction of Private Equity investment projects. Advanced financial and accounting analysis.",
+                exp_3_date: "MARCH 2023",
+                exp_3_title: "Banking & Insurance Intern",
+                exp_3_desc: "Account management and insurance product subscription. Contribution to operational monitoring with flow accounting and observation of internal processes. Exposure to operational mechanisms of a national banking network.",
+                // Projects
+                proj_title: "Labs & Projects",
+                proj_1_sub: "Software Solutions & Web",
+                proj_1_li1: "AI Agent Ecosystems",
+                proj_1_li2: "Web Dev UX/UI",
+                proj_1_li3: "Automation",
+                proj_1_d1_t: "AI & ACCOUNTING",
+                proj_1_d1_l1: "Creation of a proprietary AI agent ecosystem for independent financial analysis.",
+                proj_1_d1_l2: "Multi-model architecture for accounting processing.",
+                proj_1_d2_l1: "Complete booking platform (Front/Back).",
+                proj_1_d2_l2: "High-conversion tourism landing pages.",
+                proj_1_d3_l1: "Self-Hosting & Fine Tuning of models (LLM).",
+                proj_1_d3_l2: "Workflow automation via Python.",
+                proj_2_sub: "Data Engineering",
+                proj_2_li1: "Extractors & APIs",
+                proj_2_li2: "Statistical Models",
+                proj_2_li3: "Interactive Dashboards",
+                proj_2_d1_l1: "Private Equity investment dashboards.",
+                proj_2_d1_l2: "Profitability calculator & portfolio allocation.",
+                proj_2_d1_l3: "Risk Management tools & Option pricing.",
+                proj_2_d2_t: "EXTRACTORS & API",
+                proj_2_d2_l1: "Scraping and flow analysis (INSEE, Boursorama).",
+                proj_2_d2_l2: "Automatic balance sheet classification via AI.",
+                proj_3_sub: "Research & Strategy",
+                proj_3_li1: "Macro & Flows",
+                proj_3_li2: "Market Structure",
+                proj_3_li3: "Risk Management",
+                proj_3_d1_t: "PRIVATE MANAGEMENT",
+                proj_3_d1_l1: "Macro watch, flow analysis & implied volatility.",
+                proj_3_d1_l2: "Lending & Borrowing Strategies (DeFi).",
+                proj_3_d1_l3: "Strict control of drawdowns and risks.",
+                proj_3_d2_l1: "In-depth financial diagnosis (SME).",
+                proj_3_d2_l2: "Report writing & Sector comparison.",
+                // Contact
+                contact_next: "NEXT STEP",
+                contact_desc: "Looking for a work-study program or collaboration in Market Finance, Corporate Finance, or Asset Management.<br>Contact me!",
+                form_name: "NAME",
+                form_msg: "MESSAGE",
+                form_send: "SEND",
+                card_bubble: "View Details"
+            }
+        };
+
+        function changeLanguage(lang) {
+            // Update active button state
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${lang}`).classList.add('active');
+
+            // Update simple text and html content
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    element.innerHTML = translations[lang][key];
+                }
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+
+            // Update Project Card Bubbles (CSS pseudo-elements workaround via style injection)
+            const styleId = 'lang-style-override';
+            let styleTag = document.getElementById(styleId);
+            if (!styleTag) {
+                styleTag = document.createElement('style');
+                styleTag.id = styleId;
+                document.head.appendChild(styleTag);
+            }
+            styleTag.innerHTML = `.project-card::after { content: '${translations[lang]['card_bubble']}'; }`;
+
+            // Save preference
+            localStorage.setItem('preferred_lang', lang);
+        }
+
+        // Initialize Language on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferred_lang') || 'en';
+            changeLanguage(savedLang);
+        });
+
+        // --- END TRANSLATION LOGIC ---
+
+        // --- VARIABLES GLOBALES ---
+        let isBlackHoleActive = false;
+        let blackHoleY = 0;
+        let pressStartTime = 0;
+        const CHARGE_DURATION = 3000;
+        let isLocked = false;
+
+        // --- PRELOADER LOGIC ---
+
+        // On bloque le scroll pendant le chargement
+        document.body.style.overflow = 'hidden';
+        window.scrollTo(0, 0); // Force le retour en haut
+
+        const preloader = document.getElementById('preloader');
+        const percentEl = document.querySelector('.loader-percent');
+        const barEl = document.querySelector('.loader-bar-fill');
+        const textEl = document.querySelector('.loader-text');
+
+        // Les messages techniques qui défilent
+        const techMessages = [
+            "INITIALIZING KERNEL...",
+            "LOADING ASSETS...",
+            "CONNECTING TO NEURAL NET...",
+            "OPTIMIZING TENSORS...",
+            "FETCHING MARKET DATA...",
+            "CALCULATING ALPHA...",
+            "SYSTEM READY."
+        ];
+
+        let progress = 0;
+        let messageIndex = 0;
+
+        // Fonction de simulation de chargement
+        function updateLoader() {
+            // On augmente le progrès de manière aléatoire (plus réaliste)
+            progress += Math.random() * 5;
+
+            if (progress > 100) progress = 100;
+
+            // Mise à jour visuelle
+            percentEl.textContent = Math.floor(progress) + '%';
+            barEl.style.width = progress + '%';
+
+            // Changement de message tous les 15%
+            if (progress > (messageIndex + 1) * 15 && messageIndex < techMessages.length - 1) {
+                messageIndex++;
+                textEl.textContent = techMessages[messageIndex];
+            }
+
+            if (progress < 100) {
+                requestAnimationFrame(updateLoader);
+            } else {
+                // FIN DU CHARGEMENT
+                setTimeout(endLoader, 500); // Petite pause à 100%
+            }
+        }
+
+        // Lancement immédiat
+        requestAnimationFrame(updateLoader);
+
+        function endLoader() {
+            // 1. Animation de sortie du rideau (Vers le haut)
+            gsap.to(preloader, {
+                yPercent: -100, // Slide vers le haut
+                duration: 1.2,
+                ease: "power4.inOut",
+                onComplete: () => {
+                    // On supprime le preloader du DOM pour la performance
+                    preloader.style.display = 'none';
+                    // On réactive le scroll
+                    document.body.style.overflow = '';
+
+                    // >>> C'EST ICI QU'ON LANCE L'ANIMATION DU HERO <<<
+                    startHeroAnimation();
+                }
+            });
+        }
+        // 1. LENIS SMOOTH SCROLL
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // 2. CUSTOM CURSOR
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+        // --- VARIABLES EXPLOSION ---
+        const raycaster = new THREE.Raycaster();
+        // Le seuil (threshold) définit la "taille" de la zone cliquable autour d'un point
+        raycaster.params.Points.threshold = 0.05;
+
+        // Un tableau pour stocker les explosions actives
+        let explosions = [];
+
+        window.addEventListener('mousemove', function (e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot follows instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with lag via GSAP
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // 3. THREE.JS PARTICLE BACKGROUND
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Fonction utilitaire pour créer une texture de rond parfait
+        function getTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+
+            // On dessine un cercle avec un dégradé radial (coeur blanc -> bords transparents)
+            const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)'); // Centre opaque
+            gradient.addColorStop(1, 'rgba(255,255,255,0)'); // Bord transparent
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 32, 32);
+
+            const texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        // On stocke la texture dans une variable pour l'utiliser partout
+        const particleTexture = getTexture();
+
+        // Particles
+        const geometry = new THREE.BufferGeometry();
+        const particlesCount = 600;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            // Spread particles wide
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.12,          // J'ai un peu augmenté la taille car le rond est plus doux
+            color: 0x00f3ff,     // Cyan
+            map: particleTexture, // <--- C'est ça qui rend rond !
+            transparent: true,
+            opacity: 0.9,
+            blending: THREE.AdditiveBlending, // Effet de fusion lumineuse
+            depthWrite: false,   // Empêche les bugs visuels de transparence
+        });
+
+        // Add secondary purple particles
+        const geometry2 = new THREE.BufferGeometry();
+        const posArray2 = new Float32Array(particlesCount * 3);
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray2[i] = (Math.random() - 0.5) * 20;
+        }
+        geometry2.setAttribute('position', new THREE.BufferAttribute(posArray2, 3));
+        const material2 = new THREE.PointsMaterial({
+            size: 0.1,
+            color: 0x7000ff,     // Purple
+            map: particleTexture,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+        });
+        const particlesMesh = new THREE.Points(geometry, material);
+        const particlesMesh2 = new THREE.Points(geometry2, material2);
+
+        scene.add(particlesMesh);
+        scene.add(particlesMesh2);
+
+        const geometry3 = new THREE.BufferGeometry();
+        const particlesCount3 = 1500; // Plus de particules
+        const posArray3 = new Float32Array(particlesCount3 * 3);
+
+        for (let i = 0; i < particlesCount3 * 3; i++) {
+            // Dispersion très large (25) pour qu'elles soient en fond
+            posArray3[i] = (Math.random() - 0.5) * 25;
+        }
+
+        geometry3.setAttribute('position', new THREE.BufferAttribute(posArray3, 3));
+
+        const material3 = new THREE.PointsMaterial({
+            size: 0.05,           // Plus petit pour le fond
+            color: 0xffffff,     // Blanc
+            map: particleTexture,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+        });
+
+        const particlesMesh3 = new THREE.Points(geometry3, material3);
+        scene.add(particlesMesh3);
+
+        camera.position.z = 3;
+
+        // --- LOGIQUE CORRIGÉE : DRAG & DROP + CURSEUR UNIFIÉ ---
+
+        // Variables pour la rotation
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+
+        // Variables pour le PARALLAXE (Mouvement passif)
+        let mouseX = 0;
+        let mouseY = 0;
+
+        // Variables pour le Drag
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        // 1. CLIC (IMPULSION + VERROUILLAGE TEXTE)
+
+        // 1. CLIC (IMPULSION + VERROUILLAGE + EXPLOSION)
+        document.addEventListener('mousedown', (event) => {
+            isDragging = true;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+
+            document.body.classList.add('grabbing-mode');
+
+            // --- LOGIQUE RAYCASTER (EXPLOSION) ---
+            // 1. On met à jour le rayon avec la position de la souris et la caméra
+            // (On utilise les variables mouseX/mouseY calculées dans le mousemove)
+            // Note: le Raycaster a besoin de coordonnées de -1 à +1, or mouseX/Y sont de -0.5 à 0.5.
+            // Donc on multiplie par 2.
+            const rayMouse = new THREE.Vector2(mouseX * 2, mouseY * -2); // Y est inversé en 3D
+            raycaster.setFromCamera(rayMouse, camera);
+
+            // 2. On regarde si on touche les particules (Cyan ou Violette)
+            // On ne vise pas la couche blanche (trop loin)
+            const intersects = raycaster.intersectObjects([particlesMesh, particlesMesh2]);
+
+            if (intersects.length > 0) {
+                // 1. On récupère les infos de l'impact
+                const hitObject = intersects[0];
+                const hitPoint = hitObject.point; // Position exacte dans l'espace
+                const index = hitObject.index;    // Quel point précis du tableau a été touché (0, 1, 2...)
+                const geometry = hitObject.object.geometry; // La géométrie globale (Cyan ou Violette)
+
+                // 2. On lance l'explosion (version affaiblie)
+                createExplosion(hitPoint);
+
+                // 3. DISPARITION MAGIQUE (Teleport Hack)
+                // On déplace ce point précis à l'infini (9999) pour qu'il ne soit plus visible
+                const positions = geometry.attributes.position;
+                positions.setXYZ(index, 9999, 9999, 9999);
+
+                // IMPORTANT : On dit à Three.js que les positions ont changé
+                positions.needsUpdate = true;
+            }
+
+            // --- FIN LOGIQUE RAYCASTER ---
+
+            // Animation du curseur (inchangée)
+            gsap.to(cursorDot, {
+                overwrite: true,
+                scale: 2.5,
+                backgroundColor: "var(--accent-primary)",
+                boxShadow: "0 0 30px 10px rgba(112, 0, 255, 0.8), 0 0 0px 2px rgba(255, 255, 255, 0.5)",
+                duration: 0.8,
+                ease: "elastic.out(1, 0.4)"
+            });
+        });
+
+        // 2. RELÂCHEMENT (RETOUR SMOOTH + DÉVERROUILLAGE)
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+
+            // AJOUT : On réautorise la sélection de texte
+            document.body.classList.remove('grabbing-mode');
+
+            gsap.to(cursorDot, {
+                overwrite: true,
+                scale: 1,
+                backgroundColor: "var(--accent-secondary)",
+                boxShadow: "0 0 10px 2px rgba(0, 243, 255, 0.8), 0 0 30px 10px rgba(0, 243, 255, 0.3)",
+                duration: 0.4,
+                ease: "power3.out"
+            });
+        });
+
+        // 3. MOUVEMENT (SUIVI + PARALLAXE + DRAG)
+        document.addEventListener('mousemove', (event) => {
+            const posX = event.clientX;
+            const posY = event.clientY;
+
+            // A. Gestion du curseur (inchangé)
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // B. Calcul pour le PARALLAXE (Nouveau !)
+            // On ramène la valeur entre -0.5 (gauche/haut) et 0.5 (droite/bas)
+            mouseX = (event.clientX / window.innerWidth) - 0.5;
+            mouseY = (event.clientY / window.innerHeight) - 0.5;
+
+            // C. Logique du DRAG (inchangé)
+            if (isDragging) {
+                const deltaMove = {
+                    x: event.clientX - previousMousePosition.x,
+                    y: event.clientY - previousMousePosition.y
+                };
+
+                // On tourne le monde
+                targetRotationY += deltaMove.x * 0.005;
+                targetRotationX += deltaMove.y * 0.005;
+
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+            }
+        });
+
+        // --- NOUVEAU : GESTION DU SWIPE MOBILE (ROTATION) ---
+        let touchStartX = 0;
+        let touchPreviousX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            // On enregistre où le doigt se pose
+            touchStartX = e.touches[0].clientX;
+            touchPreviousX = touchStartX;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            const touchCurrentX = e.touches[0].clientX;
+
+            // On calcule le décalage depuis la dernière position connue
+            const deltaX = touchCurrentX - touchPreviousX;
+
+            // On applique la rotation (0.01 est la sensibilité, ajustez si besoin)
+            // On inverse le signe (-) pour que ça tourne dans le sens naturel du doigt
+            targetRotationY -= deltaX * 0.01;
+
+            // On met à jour la position précédente pour la prochaine boucle
+            touchPreviousX = touchCurrentX;
+        }, { passive: true });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function createExplosion(position) {
+            const count = 20; // Moins de débris (C'était 30)
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            const velocities = [];
+
+            for (let i = 0; i < count; i++) {
+                positions[i * 3] = position.x;
+                positions[i * 3 + 1] = position.y;
+                positions[i * 3 + 2] = position.z;
+
+                // VITESSE RÉDUITE : On multiplie par 0.02 au lieu de 0.1
+                // L'explosion sera plus compacte et moins violente
+                velocities.push({
+                    x: (Math.random() - 0.5) * 0.05,
+                    y: (Math.random() - 0.5) * 0.05,
+                    z: (Math.random() - 0.5) * 0.05
+                });
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.1, // Particules plus fines (C'était 0.1)
+                color: 0xffffff,
+                map: particleTexture,
+                transparent: true,
+                opacity: 0.8, // Un peu moins opaque au départ
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            const particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+
+            explosions.push({
+                mesh: particleSystem,
+                velocities: velocities,
+                age: 0
+            });
+        }
+
+        // 9. GESTION AVANCÉE : TROU NOIR -> TROU BLANC
+        const blackHole = document.getElementById('black-hole');
+
+        // États possibles : 'idle', 'sucking', 'void', 'expelling'
+        let worldState = 'idle';
+
+        if (blackHole) {
+
+            // --- FONCTION D'ACTIVATION (SOURIS + TACTILE) ---
+            const startSingularity = (e) => {
+                // Empêche le scroll ou la sélection de texte sur mobile
+                if (e.cancelable) e.preventDefault();
+
+                document.body.classList.add('grabbing-mode');
+
+                // CALCUL DE LA POSITION 3D DU TROU NOIR
+                const rect = blackHole.getBoundingClientRect();
+                const centerY = rect.top + rect.height / 2;
+                const normalizedY = -((centerY / window.innerHeight) * 2 - 1);
+
+                // On met à jour la variable globale
+                blackHoleY = normalizedY * 2.8;
+
+                if (worldState === 'idle') {
+                    worldState = 'sucking';
+                    // On ne lance l'animation du curseur que si on est sur PC (pas de touch)
+                    if (typeof cursorDot !== 'undefined' && e.type === 'mousedown') {
+                        gsap.to(cursorDot, { scale: 4, backgroundColor: "#ff0000", boxShadow: "0 0 50px 10px rgba(255, 0, 0, 0.8)", duration: 0.2 });
+                    }
+                }
+                else if (worldState === 'void') {
+                    worldState = 'expelling';
+                    if (typeof cursorDot !== 'undefined' && e.type === 'mousedown') {
+                        gsap.to(cursorDot, { scale: 4, backgroundColor: "#ffffff", boxShadow: "0 0 50px 10px rgba(0, 243, 255, 0.8)", duration: 0.2 });
+                    }
+                }
+            };
+
+            // --- FONCTION D'ARRÊT (SOURIS + TACTILE) ---
+            const cancelAction = () => {
+                document.body.classList.remove('grabbing-mode');
+
+                // Reset Curseur
+                if (typeof cursorDot !== 'undefined') {
+                    gsap.to(cursorDot, { scale: 1, backgroundColor: "var(--accent-secondary)", boxShadow: "0 0 10px 2px rgba(0, 243, 255, 0.8)", duration: 0.5 });
+                }
+
+                // LOGIQUE D'ANNULATION
+                if (worldState === 'sucking') {
+                    worldState = 'idle';
+                    if (typeof particlesMesh !== 'undefined') particlesMesh.visible = true;
+                    if (typeof particlesMesh2 !== 'undefined') particlesMesh2.visible = true;
+                    if (typeof particlesMesh3 !== 'undefined') particlesMesh3.visible = true;
+
+                    if (typeof particlesMesh !== 'undefined') gsap.to(particlesMesh.scale, { x: 1, y: 1, z: 1, duration: 2, ease: "elastic.out(1, 0.3)" });
+                    if (typeof particlesMesh2 !== 'undefined') gsap.to(particlesMesh2.scale, { x: 1, y: 1, z: 1, duration: 2, ease: "elastic.out(1, 0.3)" });
+                    if (typeof particlesMesh3 !== 'undefined') gsap.to(particlesMesh3.scale, { x: 1, y: 1, z: 1, duration: 2, ease: "elastic.out(1, 0.3)" });
+                }
+                else if (worldState === 'expelling') {
+                    worldState = 'void';
+                    if (typeof particlesMesh !== 'undefined') gsap.to(particlesMesh.scale, { x: 0, y: 0, z: 0, duration: 0.5 });
+                    if (typeof particlesMesh2 !== 'undefined') gsap.to(particlesMesh2.scale, { x: 0, y: 0, z: 0, duration: 0.5 });
+                    if (typeof particlesMesh3 !== 'undefined') gsap.to(particlesMesh3.scale, { x: 0, y: 0, z: 0, duration: 0.5 });
+
+                    setTimeout(() => {
+                        if (worldState === 'void') {
+                            if (typeof particlesMesh !== 'undefined') particlesMesh.visible = false;
+                            if (typeof particlesMesh2 !== 'undefined') particlesMesh2.visible = false;
+                            if (typeof particlesMesh3 !== 'undefined') particlesMesh3.visible = false;
+                        }
+                    }, 500);
+                }
+            };
+
+            // --- AJOUT DES ÉCOUTEURS D'ÉVÉNEMENTS (LA CLÉ EST ICI) ---
+
+            // 1. Pour Ordinateur (Souris)
+            blackHole.addEventListener('mousedown', startSingularity);
+            blackHole.addEventListener('mouseup', cancelAction);
+            blackHole.addEventListener('mouseleave', cancelAction);
+
+            // 2. Pour Mobile (Touch)
+            // { passive: false } est OBLIGATOIRE pour que e.preventDefault() fonctionne et empêche le scroll
+            blackHole.addEventListener('touchstart', startSingularity, { passive: false });
+            blackHole.addEventListener('touchend', cancelAction);
+            blackHole.addEventListener('touchcancel', cancelAction);
+        }
+
+        function animate() {
+            // --- 1. LOGIQUE DES ÉTATS ---
+
+            if (worldState === 'sucking') {
+                // >>> ASPIRATION <<<
+                targetRotationY += 0.15;
+                const shrinkSpeed = 0.98;
+
+                if (typeof particlesMesh !== 'undefined') {
+                    // 1. RÉDUCTION (Scale)
+                    particlesMesh.scale.multiplyScalar(shrinkSpeed);
+                    if (typeof particlesMesh2 !== 'undefined') particlesMesh2.scale.multiplyScalar(shrinkSpeed);
+                    if (typeof particlesMesh3 !== 'undefined') particlesMesh3.scale.multiplyScalar(shrinkSpeed);
+
+                    const attractionSpeed = 0.1;
+
+                    // 2. DÉPLACEMENT VERS LE TROU NOIR (Position Y)
+                    // On fait glisser l'univers vers le bas (blackHoleY) doucement (0.05)
+                    particlesMesh.position.y += (blackHoleY - particlesMesh.position.y) * attractionSpeed;
+                    if (typeof particlesMesh2 !== 'undefined') particlesMesh2.position.y += (blackHoleY - particlesMesh2.position.y) * attractionSpeed;
+                    if (typeof particlesMesh3 !== 'undefined') particlesMesh3.position.y += (blackHoleY - particlesMesh3.position.y) * 0.05;
+
+                    // CONDITION DE VICTOIRE
+                    if (particlesMesh.scale.x < 0.0075) {
+                        worldState = 'void';
+                        blackHole.classList.add('white-hole');
+
+                        particlesMesh.scale.set(0, 0, 0);
+                        particlesMesh2.scale.set(0, 0, 0);
+                        particlesMesh3.scale.set(0, 0, 0);
+
+                        particlesMesh.visible = false;
+                        particlesMesh2.visible = false;
+                        particlesMesh3.visible = false;
+
+                        gsap.to(cursorDot, { scale: 1, backgroundColor: "var(--accent-secondary)", duration: 0.5 });
+                    }
+                }
+
+            }
+            else if (worldState === 'expelling') {
+                // >>> RENAISSANCE <<<
+                targetRotationY -= 0.2;
+                const growSpeed = 1.05;
+
+                if (typeof particlesMesh !== 'undefined') {
+                    if (particlesMesh.visible === false) {
+                        particlesMesh.visible = true;
+                        particlesMesh2.visible = true;
+                        particlesMesh3.visible = true;
+                    }
+                    if (particlesMesh.scale.x === 0) {
+                        particlesMesh.scale.set(0.001, 0.001, 0.001);
+                        particlesMesh2.scale.set(0.001, 0.001, 0.001);
+                        particlesMesh3.scale.set(0.001, 0.001, 0.001);
+                    }
+
+                    particlesMesh.scale.multiplyScalar(growSpeed);
+                    particlesMesh2.scale.multiplyScalar(growSpeed);
+                    particlesMesh3.scale.multiplyScalar(growSpeed);
+
+                    // PENDANT LA RENAISSANCE : ON RESTE SUR LE TROU BLANC
+                    // On force la position à rester en bas tant que ça n'a pas fini de grandir
+                    particlesMesh.position.y = blackHoleY;
+                    if (typeof particlesMesh2 !== 'undefined') particlesMesh2.position.y = blackHoleY;
+                    if (typeof particlesMesh3 !== 'undefined') particlesMesh3.position.y = blackHoleY;
+
+                    if (particlesMesh.scale.x >= 1) {
+                        worldState = 'idle';
+                        blackHole.classList.remove('white-hole');
+                        particlesMesh.scale.set(1, 1, 1);
+                        particlesMesh2.scale.set(1, 1, 1);
+                        particlesMesh3.scale.set(1, 1, 1);
+                    }
+                }
+            }
+            else if (worldState === 'void') {
+                // Néant
+            }
+            else {
+                // >>> IDLE (Retour à la normale) <<<
+                targetRotationY += 0.0005;
+                targetRotationX += 0.0002;
+
+                // RETOUR AU CENTRE (0)
+                // Si l'univers est décalé (suite à une aspiration annulée ou une fin de renaissance), on le remonte
+                if (typeof particlesMesh !== 'undefined') {
+                    // On utilise une interpolation douce (0.05) pour qu'il remonte tranquillement au centre
+                    particlesMesh.position.y += (0 - particlesMesh.position.y) * 0.05;
+                    if (typeof particlesMesh2 !== 'undefined') particlesMesh2.position.y += (0 - particlesMesh2.position.y) * 0.05;
+                    if (typeof particlesMesh3 !== 'undefined') particlesMesh3.position.y += (0 - particlesMesh3.position.y) * 0.05;
+                }
+            }
+
+            // ... LA SUITE DU CODE NE CHANGE PAS ...
+            // (Calculs souris, Explosions, Render...)
+            // Assure-toi de garder la suite de ta fonction animate existante ici
+            let currentMouseX = (typeof mouseX !== 'undefined') ? mouseX : 0;
+            let currentMouseY = (typeof mouseY !== 'undefined') ? mouseY : 0;
+
+            if (typeof particlesMesh !== 'undefined') {
+                let rotY1 = targetRotationY + (currentMouseX * 0.5);
+                let rotX1 = targetRotationX + (currentMouseY * 0.5);
+                particlesMesh.rotation.y += (rotY1 - particlesMesh.rotation.y) * 0.05;
+                particlesMesh.rotation.x += (rotX1 - particlesMesh.rotation.x) * 0.05;
+            }
+            if (typeof particlesMesh2 !== 'undefined') {
+                let rotY2 = targetRotationY + (currentMouseX * 0.3);
+                let rotX2 = targetRotationX + (currentMouseY * 0.3);
+                particlesMesh2.rotation.y += (rotY2 - particlesMesh2.rotation.y) * 0.04;
+                particlesMesh2.rotation.x += (rotX2 - particlesMesh2.rotation.x) * 0.04;
+            }
+            if (typeof particlesMesh3 !== 'undefined') {
+                let rotY3 = (targetRotationY * 0.5) + (currentMouseX * 0.1);
+                let rotX3 = (targetRotationX * 0.5) + (currentMouseY * 0.1);
+                particlesMesh3.rotation.y += (rotY3 - particlesMesh3.rotation.y) * 0.02;
+                particlesMesh3.rotation.x += (rotX3 - particlesMesh3.rotation.x) * 0.02;
+            }
+
+            // COPIE/COLLE LE BLOC EXPLOSION ICI SI TU L'AVAIS
+            if (typeof explosions !== 'undefined') {
+                for (let i = explosions.length - 1; i >= 0; i--) {
+                    const explosion = explosions[i];
+                    const positions = explosion.mesh.geometry.attributes.position.array;
+                    for (let j = 0; j < explosion.velocities.length; j++) {
+                        positions[j * 3] += explosion.velocities[j].x;
+                        positions[j * 3 + 1] += explosion.velocities[j].y;
+                        positions[j * 3 + 2] += explosion.velocities[j].z;
+                    }
+                    explosion.mesh.geometry.attributes.position.needsUpdate = true;
+                    explosion.mesh.material.opacity -= 0.03;
+                    if (explosion.mesh.material.opacity <= 0) {
+                        scene.remove(explosion.mesh);
+                        explosion.mesh.geometry.dispose();
+                        explosion.mesh.material.dispose();
+                        explosions.splice(i, 1);
+                    }
+                }
+            }
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 4. GSAP ANIMATIONS
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Reveal
+        function startHeroAnimation() {
+            const tl = gsap.timeline();
+
+            // On prépare les positions de départ (tout le monde en bas !)
+            tl.set(".hero-label, h1, .hero p, .btn-glow, nav, .hero-stats", { y: 30 })
+                .set("nav", { y: -50 }) // Sauf la nav qui vient du haut
+
+                // Séquence d'apparition
+                .to(".hero-label", { y: 0, autoAlpha: 1, duration: 1 })
+                .to("h1", { y: 0, autoAlpha: 1, duration: 1, ease: "power4.out" }, "-=0.8")
+                .to(".hero p", { y: 0, autoAlpha: 1, duration: 1 }, "-=0.8")
+                .to(".btn-glow", { scale: 1, autoAlpha: 1, duration: 0.5, clearProps: "transform" }, "-=0.5")
+
+                // L'AJOUT EST ICI : On anime les stats vers 0.7 d'opacité (pour garder le style discret)
+                .to(".hero-stats", { y: 0, autoAlpha: 0.7, duration: 1 }, "-=0.5")
+
+                .to("nav", { y: 0, autoAlpha: 1, duration: 1 }, "-=0.8");
+        }
+        // Scroll Triggers for Sections
+        gsap.utils.toArray('.card').forEach(card => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            });
+        });
+
+        gsap.utils.toArray('.xp-item').forEach(item => {
+            gsap.from(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 80%",
+                },
+                x: -50,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            });
+        });
+
+        // Parallax for Contact
+        gsap.to(".contact-big", {
+            scrollTrigger: {
+                trigger: "#contact",
+                scrub: 1,
+            },
+            scale: 1.1,
+            duration: 1
+        });
+
+        // 5. NEW INTERACTIVITY FEATURES
+
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const menu = document.querySelector('.mobile-menu');
+            const btn = document.querySelector('.mobile-menu-btn');
+            menu.classList.toggle('active');
+            btn.classList.toggle('active');
+        }
+
+        // Active Navigation Highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        // 7. GESTION DE LA MODAL PROJETS (Fix Mobile Définitif)
+        const projectModal = document.getElementById('project-modal');
+
+        if (projectModal) {
+            const modalBody = document.getElementById('modal-body');
+            const modalTitle = document.getElementById('modal-title');
+            const closeBtn = document.querySelector('.modal-close');
+            const projectCards = document.querySelectorAll('.project-card');
+
+            // Fonction pour ouvrir
+            const openCard = (card) => {
+                const titleEl = card.querySelector('h3');
+                const contentEl = card.querySelector('.project-hidden-content');
+
+                if (titleEl && contentEl) {
+                    modalTitle.innerText = titleEl.innerText;
+                    modalBody.innerHTML = contentEl.innerHTML;
+                    projectModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+
+                    // Une fois ouvert, on retire la classe 'tap-active' pour le futur
+                    card.classList.remove('tap-active');
+                }
+            };
+
+            const closeProjectModal = () => {
+                projectModal.classList.remove('active');
+                document.body.style.overflow = '';
+                // On nettoie tout à la fermeture
+                projectCards.forEach(c => c.classList.remove('tap-active'));
+            };
+
+            // --- LOGIQUE DES CLICS ---
+            projectCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'A') return;
+
+                    // EST-CE UN MOBILE ? (Pas de souris précise)
+                    const isMobile = window.matchMedia("(hover: none)").matches;
+
+                    if (isMobile) {
+                        // Si la carte a DÉJÀ la classe, c'est le 2ème clic -> OUVRIR
+                        if (card.classList.contains('tap-active')) {
+                            openCard(card);
+                        }
+                        else {
+                            // C'est le 1er clic -> ACTIVER LA BULLE
+                            e.preventDefault();  // STOP ! On n'ouvre pas tout de suite
+                            e.stopPropagation(); // On arrête tout ici
+
+                            // On éteint les autres cartes
+                            projectCards.forEach(c => c.classList.remove('tap-active'));
+
+                            // On allume celle-ci
+                            card.classList.add('tap-active');
+                        }
+                    } else {
+                        // SUR PC -> On ouvre direct
+                        openCard(card);
+                    }
+                });
+            });
+
+            // Si on clique n'importe où ailleurs, on éteint les bulles
+            document.body.addEventListener('click', (e) => {
+                if (!e.target.closest('.project-card')) {
+                    projectCards.forEach(c => c.classList.remove('tap-active'));
+                }
+            });
+
+            // Fermeture standard
+            if (closeBtn) closeBtn.addEventListener('click', closeProjectModal);
+            projectModal.addEventListener('click', (e) => {
+                if (e.target === projectModal) closeProjectModal();
+            });
+        }
+
+        // 5. GESTION DES ANCRES (Scroll fluide au clic)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault(); // On bloque le saut brutal natif
+
+                // On récupère la cible (ex: #about)
+                const targetId = this.getAttribute('href');
+
+                // On demande à Lenis d'y aller en douceur
+                lenis.scrollTo(targetId, {
+                    offset: 0,      // Tu peux mettre -50 si tu veux un décalage (header fixed)
+                    duration: 1.5,  // Durée du trajet (plus c'est haut, plus c'est lent)
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Même courbe que le scroll
+                });
+            });
+        });
+        // 6. GESTION DU FORMULAIRE (Réel avec Formspree)
+        const form = document.getElementById('contact-form');
+        const btn = form.querySelector('.form-btn');
+        const btnText = btn.querySelector('span');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Empêche le rechargement de la page
+
+            // 1. État de chargement (Animation visuelle)
+            const originalText = btnText.textContent;
+            btnText.textContent = "ENCRYPTING DATA...";
+            btn.style.opacity = "0.7";
+            btn.style.pointerEvents = "none"; // Empêche de cliquer 2 fois
+
+            // 2. Envoi des données vers Formspree
+            const formData = new FormData(form);
+
+            try {
+                // REMPLACEZ L'URL CI-DESSOUS PAR LA VÔTRE (ex: https://formspree.io/f/...)
+                const response = await fetch("https://formspree.io/f/mgoealpk", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // 3. SUCCÈS
+                    btn.style.backgroundColor = "var(--accent-secondary)"; // Cyan
+                    btn.style.borderColor = "var(--accent-secondary)";
+                    btn.style.color = "#000";
+                    btnText.textContent = "MESSAGE ENVOYÉ";
+                    
+                    form.reset(); // Vide le formulaire
+
+                    // Retour à la normale après 3 secondes
+                    setTimeout(() => {
+                        btn.style.backgroundColor = ""; 
+                        btn.style.borderColor = "";
+                        btn.style.color = "";
+                        btn.style.opacity = "1";
+                        btn.style.pointerEvents = "all";
+                        // On remet le texte original (ENVOYER ou SEND selon la langue)
+                        btnText.textContent = originalText; 
+                    }, 3000);
+                } else {
+                    // ERREUR CÔTÉ SERVEUR
+                    throw new Error('Erreur serveur');
+                }
+            } catch (error) {
+                // 4. ÉCHEC (Problème connexion, etc.)
+                console.error(error);
+                btn.style.backgroundColor = "red";
+                btn.style.borderColor = "red";
+                btnText.textContent = "ERREUR";
+                
+                setTimeout(() => {
+                    btn.style.backgroundColor = ""; 
+                    btn.style.borderColor = "";
+                    btn.style.color = "";
+                    btn.style.opacity = "1";
+                    btn.style.pointerEvents = "all";
+                    btnText.textContent = originalText;
+                }, 3000);
+            }
+        });
+
+        // 8. EFFET "AURA MAGNÉTIQUE" SUR LE BOUTON HERO
+        const btnGlow = document.querySelector('.btn-glow');
+
+        // On crée le canvas dynamiquement
+        const canvasBtn = document.createElement('canvas');
+        canvasBtn.classList.add('btn-canvas');
+        btnGlow.appendChild(canvasBtn);
+
+        const ctxBtn = canvasBtn.getContext('2d');
+        let btnParticles = [];
+        let btnAnimationId;
+
+        // Configuration
+        const particleCount = 60; // Nombre de particules
+        let mouseBtn = { x: 0, y: 0 };
+        let isHovering = false;
+
+        // Ajuster la taille du canvas
+        function resizeBtnCanvas() {
+            canvasBtn.width = btnGlow.offsetWidth;
+            canvasBtn.height = btnGlow.offsetHeight;
+        }
+        resizeBtnCanvas();
+        window.addEventListener('resize', resizeBtnCanvas);
+
+        // Classe Particule
+        class ButtonParticle {
+            constructor() {
+                // Apparition aléatoire dans le bouton
+                this.x = Math.random() * canvasBtn.width;
+                this.y = Math.random() * canvasBtn.height;
+                this.size = Math.random() * 2 + 0.5; // Très petites (0.5px à 2.5px)
+
+                // Vitesse initiale lente
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+
+                // Durée de vie pour scintillement
+                this.life = Math.random() * 100;
+            }
+
+            update() {
+                // 1. Attraction vers la souris (La Physique Magnétique)
+                if (isHovering) {
+                    // Calcul de la distance X/Y vers la souris
+                    const dx = mouseBtn.x - this.x;
+                    const dy = mouseBtn.y - this.y;
+
+                    // On les pousse vers la souris (plus on est près, moins on pousse fort pour éviter l'orbite folle)
+                    this.vx += dx * 0.005; // Force d'attraction
+                    this.vy += dy * 0.005;
+
+                    // Friction (pour pas qu'elles aillent trop vite)
+                    this.vx *= 0.90;
+                    this.vy *= 0.90;
+                } else {
+                    // Si on survole pas, mouvement flottant calme
+                    this.vx += (Math.random() - 0.5) * 0.1;
+                    this.vy += (Math.random() - 0.5) * 0.1;
+                    this.vx *= 0.95;
+                    this.vy *= 0.95;
+                }
+
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
+
+                // Respawn si trop vieilles ou hors cadre (pour effet continu)
+                if (this.life <= 0 ||
+                    this.x < 0 || this.x > canvasBtn.width ||
+                    this.y < 0 || this.y > canvasBtn.height) {
+
+                    // Si on survole, on les fait respawner sur les bords pour qu'elles rentrent vers le centre
+                    if (isHovering) {
+                        if (Math.random() > 0.5) {
+                            this.x = Math.random() > 0.5 ? 0 : canvasBtn.width;
+                            this.y = Math.random() * canvasBtn.height;
+                        } else {
+                            this.x = Math.random() * canvasBtn.width;
+                            this.y = Math.random() > 0.5 ? 0 : canvasBtn.height;
+                        }
+                    } else {
+                        // Sinon respawn aléatoire
+                        this.x = Math.random() * canvasBtn.width;
+                        this.y = Math.random() * canvasBtn.height;
+                    }
+
+                    this.life = 100;
+                    this.vx = 0;
+                    this.vy = 0;
+                }
+            }
+
+            draw() {
+                ctxBtn.beginPath();
+                ctxBtn.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                // Couleur : Blanc/Cyan avec transparence variable selon la vie
+                const opacity = (this.life / 100) * 0.8;
+                ctxBtn.fillStyle = `rgba(0, 243, 255, ${opacity})`;
+                ctxBtn.fill();
+            }
+        }
+
+        // Initialiser les particules
+        function initBtnParticles() {
+            btnParticles = [];
+            for (let i = 0; i < particleCount; i++) {
+                btnParticles.push(new ButtonParticle());
+            }
+        }
+
+        // Boucle d'animation
+        function animateBtn() {
+            if (!isHovering && btnParticles.length === 0) return; // Stop si pas besoin
+
+            ctxBtn.clearRect(0, 0, canvasBtn.width, canvasBtn.height);
+
+            btnParticles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            if (isHovering) {
+                btnAnimationId = requestAnimationFrame(animateBtn);
+            } else {
+                // On vide le canvas proprement quand on part
+                ctxBtn.clearRect(0, 0, canvasBtn.width, canvasBtn.height);
+            }
+        }
+
+        // Événements Souris
+        btnGlow.addEventListener('mouseenter', () => {
+            isHovering = true;
+            resizeBtnCanvas(); // Sécurité taille
+            initBtnParticles();
+            animateBtn();
+        });
+
+        btnGlow.addEventListener('mousemove', (e) => {
+            // On calcule la position de la souris RELATIVE au bouton
+            const rect = btnGlow.getBoundingClientRect();
+            mouseBtn.x = e.clientX - rect.left;
+            mouseBtn.y = e.clientY - rect.top;
+        });
+
+        btnGlow.addEventListener('mouseleave', () => {
+            isHovering = false;
+            // L'animation s'arrêtera au prochain cycle
+        });
+
+        // --- GESTION DU SCROLL FLUIDE INTELLIGENTE ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+
+                const targetId = this.getAttribute('href');
+                const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
+
+                if (isMobile) {
+                    const menu = document.querySelector('.mobile-menu');
+                    const btn = document.querySelector('.mobile-menu-btn');
+                    if (menu && menu.classList.contains('active')) {
+                        menu.classList.remove('active');
+                        btn.classList.remove('active');
+                    }
+                }
+                else {
+                    e.preventDefault();
+
+                    if (typeof lenis !== 'undefined') {
+                        lenis.scrollTo(targetId, {
+                            offset: 0,
+                            duration: 1.5,
+                            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
